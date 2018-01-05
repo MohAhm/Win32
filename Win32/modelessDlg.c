@@ -5,7 +5,7 @@
 LRESULT CALLBACK MainWndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK DlgProc(HWND, UINT, WPARAM, LPARAM);
 
-HWND hDlgModeless;
+HWND hDlgModeless = NULL;
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow) 
@@ -13,16 +13,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	HWND hWnd;
 	MSG msg;
 
-	hWnd = windowCreate(hPrevInstance, hInstance, nCmdShow, "Main Window", MainWndProc, 0);
-
-	// Creating a modeless dialog box window
-	hDlgModeless = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), hWnd, DlgProc);
-
-	ShowWindow(hDlgModeless, SW_SHOW);
+	hWnd = windowCreate(hPrevInstance, hInstance, nCmdShow, "Main Window", MainWndProc, COLOR_WINDOW + 1);
 
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
-		if (hDlgModeless == 0 || !IsDialogMessage(hDlgModeless, &msg))
+		if (!IsDialogMessage(hDlgModeless, &msg))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
@@ -37,11 +32,28 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
+	case WM_CREATE:
+		// Creating a modeless dialog box window
+		hDlgModeless = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG1), hWnd, DlgProc);
+
+		if (hDlgModeless != NULL)
+		{
+			ShowWindow(hDlgModeless, SW_SHOW);
+		}
+		else
+		{
+			MessageBox(hWnd, "CreateDialog returned NULL", "Warning!",
+				MB_OK | MB_ICONINFORMATION);
+		}
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
-		return 0;
+		break;
+	default:
+		return(DefWindowProc(hWnd, msg, wParam, lParam));
 	}
-	return DefWindowProc(hWnd, msg, wParam, lParam);
+
+	return 0;
 }
 
 
@@ -54,9 +66,6 @@ INT_PTR CALLBACK DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
-		case IDOK:
-			return (INT_PTR)TRUE;
-			break;
 		case IDCANCEL:
 			DestroyWindow(hDlg);
 			return (INT_PTR)TRUE;

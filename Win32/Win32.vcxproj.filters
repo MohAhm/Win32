@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="empty.c">
+    <ClCompile Include="wrapper.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="wrapper.c">
+    <ClCompile Include="modelessDlg.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
