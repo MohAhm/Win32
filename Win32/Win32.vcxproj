@@ -139,7 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="modelessDlg.c" />
+    <ClCompile Include="dlg.c" />
     <ClCompile Include="wrapper.c" />
   </ItemGroup>
   <ItemGroup>
