@@ -70,12 +70,15 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 INT_PTR CALLBACK DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	RECT rc, rcDlg, rcOwner;
+	BOOL fError;
+	int iLine;
 
 	switch (msg)
 	{
 	case WM_INITDIALOG:
 		// Initialize the controls 
 		// TODO ...
+		SetDlgItemInt(hDlg, IDC_EDIT1, 0, FALSE);
 
 		// Center a dialog box on the screen ...
 		// Get the owner window and dialog box rectangles. 
@@ -120,7 +123,12 @@ INT_PTR CALLBACK DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 			return (INT_PTR)TRUE;
 			break;
 		case ID_NY_KNAPP:
-			MessageBox(NULL, "It works man?\n", "A cool Mbox", 0);
+			//MessageBox(hDlg, "It works man?\n", "A cool Mbox", MB_OK);
+			
+			iLine = GetDlgItemInt(hDlg, IDC_EDIT1, &fError, FALSE);
+
+			SetDlgItemInt(hDlg, IDC_EDIT1, iLine+1, FALSE);
+
 			return (INT_PTR)TRUE;
 			break;
 		}
