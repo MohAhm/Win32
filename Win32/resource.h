@@ -3,7 +3,7 @@
 // Used by Resource.rc
 //
 #define IDD_DIALOG1                     101
-#define IDC_BUTTON1                     1001
+#define ID_VALUE                        1001
 #define ID_NY_KNAPP                     1002
 #define IDC_EDIT1                       1003
 #define ID_STATIC                       1004
