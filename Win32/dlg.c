@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <stdio.h>
 #include "resource.h"
 #include "wrapper.h"
 
@@ -72,6 +73,7 @@ INT_PTR CALLBACK DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 	RECT rc, rcDlg, rcOwner;
 	BOOL fError;
 	int iLine;
+	char buffer[1024];
 
 	switch (msg)
 	{
@@ -128,6 +130,14 @@ INT_PTR CALLBACK DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 			iLine = GetDlgItemInt(hDlg, IDC_EDIT1, &fError, FALSE);
 
 			SetDlgItemInt(hDlg, IDC_EDIT1, iLine+1, FALSE);
+
+			return (INT_PTR)TRUE;
+			break;
+		case ID_VALUE:
+			iLine = GetDlgItemInt(hDlg, IDC_EDIT1, &fError, FALSE);
+			sprintf(buffer, "Value: %d", iLine);
+
+			MessageBox(hDlg, buffer, "EditBox Value", MB_OK);
 
 			return (INT_PTR)TRUE;
 			break;
