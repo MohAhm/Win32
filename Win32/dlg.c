@@ -1,21 +1,30 @@
 #include <windows.h>
 #include <stdio.h>
 #include "resource.h"
-#include "wrapper.h"
 
-LRESULT CALLBACK MainWndProc(HWND, UINT, WPARAM, LPARAM);
+
 INT_PTR CALLBACK DlgProc(HWND, UINT, WPARAM, LPARAM);
 
-HWND hWnd = NULL;
-HWND hWndDlg = NULL;
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow) 
 {
 	MSG msg;
 	BOOL bRet;
+	HWND hWndDlg;
 
-	hWnd = windowCreate(hPrevInstance, hInstance, nCmdShow, "Main Window", MainWndProc, COLOR_WINDOW + 1);
+
+	hWndDlg = CreateDialogA(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), 0, DlgProc);
+
+	if (hWndDlg != NULL)
+	{
+		ShowWindow(hWndDlg, SW_SHOW);
+	}
+	else
+	{
+		MessageBox(NULL, "CreateDialog returned NULL", "Warning!",
+			MB_OK | MB_ICONINFORMATION);
+	}
 
 	while ((bRet = GetMessage(&msg, NULL, 0, 0)) != 0)
 	{
@@ -34,43 +43,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 }
 
 
-LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	switch (msg)
-	{
-	case WM_CREATE:
-		// This ensures that the application does not display two dialog boxes at the same time
-		if (!IsWindow(hWndDlg))
-		{
-			// Creating a modeless dialog box window
-			hWndDlg = CreateDialog(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG1), hWnd, DlgProc);
-
-			if (hWndDlg != NULL)
-			{
-				ShowWindow(hWndDlg, SW_SHOW);
-			}
-			else
-			{
-				MessageBox(hWnd, "CreateDialog returned NULL", "Warning!",
-					MB_OK | MB_ICONINFORMATION);
-			}
-		}	
-		break;
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	default:
-		return(DefWindowProc(hWnd, msg, wParam, lParam));
-	}
-
-	return 0;
-}
-
-
 // Dialog box procedure
 INT_PTR CALLBACK DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	RECT rc, rcDlg, rcOwner;
 	BOOL fError;
 	int iLine;
 	char buffer[1024];
@@ -79,40 +54,12 @@ INT_PTR CALLBACK DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_INITDIALOG:
 		// Initialize the controls 
-		// TODO ...
 		SetDlgItemInt(hDlg, IDC_EDIT1, 0, FALSE);
 
-		// Center a dialog box on the screen ...
-		// Get the owner window and dialog box rectangles. 
-		if ((hWnd = GetParent(hDlg)) == NULL)
-		{
-			hWnd = GetDesktopWindow();
-		}
-
-		GetWindowRect(hWnd, &rcOwner);
-		GetWindowRect(hDlg, &rcDlg);
-		CopyRect(&rc, &rcOwner);
-
-		// Offset the owner and dialog box rectangles so that right and bottom 
-		// values represent the width and height, and then offset the owner again 
-		// to discard space taken up by the dialog box. 
-		OffsetRect(&rcDlg, -rcDlg.left, -rcDlg.top);
-		OffsetRect(&rc, -rc.left, -rc.top);
-		OffsetRect(&rc, -rcDlg.right, -rcDlg.bottom);
-
-		// The new position is the sum of half the remaining space and the owner's 
-		// original position. 
-		SetWindowPos(hDlg,
-			HWND_TOP,
-			rcOwner.left + (rc.right / 2),
-			rcOwner.top + (rc.bottom / 2),
-			0, 0,          // Ignores size arguments. 
-			SWP_NOSIZE);
-
 		// Set the input focus
-		if (GetDlgCtrlID((HWND)wParam) != ID_NY_KNAPP)
+		if (GetDlgCtrlID((HWND)wParam) != ID_INCREM)
 		{
-			SetFocus(GetDlgItem(hDlg, ID_NY_KNAPP));
+			SetFocus(GetDlgItem(hDlg, ID_INCREM));
 			return FALSE;
 		}
 		return (INT_PTR)TRUE;
@@ -121,10 +68,9 @@ INT_PTR CALLBACK DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 		case IDCANCEL:
 			DestroyWindow(hDlg);
-			hWndDlg = NULL;
 			return (INT_PTR)TRUE;
 			break;
-		case ID_NY_KNAPP:
+		case ID_INCREM:
 			//MessageBox(hDlg, "It works man?\n", "A cool Mbox", MB_OK);
 			
 			iLine = GetDlgItemInt(hDlg, IDC_EDIT1, &fError, FALSE);

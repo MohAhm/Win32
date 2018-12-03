@@ -4,7 +4,7 @@
 //
 #define IDD_DIALOG1                     101
 #define ID_VALUE                        1001
-#define ID_NY_KNAPP                     1002
+#define ID_INCREM                       1002
 #define IDC_EDIT1                       1003
 #define ID_STATIC                       1004
 #define ID_EDITBOX                      1004
